@@ -297,7 +297,7 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
 
   @override
   void initState() {
-    scrollController = ScrollController();
+    scrollController = ScrollController(keepScrollOffset: false);
     scrollController.addListener(_scrollListener);
     super.initState();
   }
@@ -314,10 +314,12 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
         ScrollDirection.reverse) {
       setState(() {
         _dragContainerHeight = 0.95;
+        scrollController = ScrollController(initialScrollOffset: 0);
       });
     } else if (scrollController.position.userScrollDirection ==
         ScrollDirection.forward) {
       setState(() {
+        log("forard ");
         _dragContainerHeight = 0.55;
       });
     }
@@ -362,13 +364,9 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
                           double? primaryDelta = details.primaryDelta;
                           if (primaryDelta != null) {
                             if (primaryDelta.toString().contains('-')) {
-                              _dragContainerHeight = 0.955;
+                              _dragContainerHeight = 0.95;
                             } else {
-                              if (_dragContainerHeight == 0.55) {
-                                Get.back();
-                              } else {
-                                _dragContainerHeight = 0.55;
-                              }
+                              _dragContainerHeight = 0.55;
                             }
                           }
                         });
