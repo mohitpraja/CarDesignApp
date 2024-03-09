@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:cardesignapp/core/colors.dart';
+import 'package:cardesignapp/core/widgets.dart';
 import 'package:cardesignapp/feature/home/controller/home_controller.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
@@ -484,25 +485,175 @@ class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
                             vertical: 5, horizontal: 15),
                         child: const Text('Key Information : ')),
                     SizedBox(
-                      height: 300,
+                      height: 230,
                       child: GridView.count(
                         crossAxisCount: 3,
                         mainAxisSpacing: 0,
                         crossAxisSpacing: 0,
                         physics: const NeverScrollableScrollPhysics(),
-                        children: List.generate(controller.keyInformation.length,
-                            (index) {
+                        children: List.generate(
+                            controller.keyInformation.length, (index) {
                           return Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(controller.keyInformation[index]['icon'],color: Colors.black54,),
-                              Text(controller.keyInformation[index]['title'],style: TextStyle(color: grey,fontSize: 11.5),),
-                              Text(controller.keyInformation[index]['value'],style: const TextStyle(fontSize: 13),)
+                              Icon(
+                                controller.keyInformation[index]['icon'],
+                                color: Colors.black54,
+                              ),
+                              Text(
+                                controller.keyInformation[index]['title'],
+                                style: TextStyle(color: grey, fontSize: 11.5),
+                              ),
+                              Text(
+                                controller.keyInformation[index]['value'],
+                                style: const TextStyle(fontSize: 13),
+                              )
                             ],
                           );
                         }),
                       ),
-                    )
+                    ),
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 20),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Row(
+                            children: [
+                              Text(
+                                'Set Bid Limit',
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Icon(
+                                Icons.edit,
+                                size: 16,
+                              ),
+                            ],
+                          ),
+                          Row(
+                            children: [
+                              const Text(
+                                'Auto Bid',
+                              ),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              SizedBox(
+                                width: 30,
+                                height: 30,
+                                child: FittedBox(
+                                  child: Switch(
+                                    value: true,
+                                    activeColor: primaryColor,
+                                    onChanged: (value) {},
+                                  ),
+                                ),
+                              )
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+                    const Divider(),
+                    Container(
+                        width: Get.width,
+                        color: Colors.blueGrey.withOpacity(0.15),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
+                        child: const Text('Bank Notes : ')),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      margin: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: grey)),
+                      child: Column(
+                        children: [
+                          bulletPointText(
+                              'Once approval received Payment has to be deposited in 2 working days.'),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          bulletPointText(
+                              'All RTO fine need to be check before bidding')
+                        ],
+                      ),
+                    ),
+                    Container(
+                        width: Get.width,
+                        color: Colors.blueGrey.withOpacity(0.15),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
+                        child: const Text('Legal Identification : ')),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.legalIdentification.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 20),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    flex: 1,
+                                    child: Text(controller
+                                        .legalIdentification[index]['name'])),
+                                Expanded(
+                                    flex: 2,
+                                    child: Text(controller
+                                        .legalIdentification[index]['value']))
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                        width: Get.width,
+                        color: Colors.blueGrey.withOpacity(0.15),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
+                        child: const Text('Insurance Information : ')),
+                    const SizedBox(
+                      height: 5,
+                    ),
+                    SizedBox(
+                      height: 120,
+                      child: ListView.builder(
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.insuranceInformation.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 8, horizontal: 20),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                    flex: 1,
+                                    child: Text(controller
+                                        .insuranceInformation[index]['name'])),
+                                Expanded(
+                                    flex: 2,
+                                    child: Text(controller
+                                        .insuranceInformation[index]['value']))
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
                   ],
                 ),
               ),

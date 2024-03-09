@@ -198,4 +198,34 @@ class HomeController extends GetxController {
       'value': 'Automatic'
     },
   ];
+
+  List legalIdentification = [
+    {
+      'name': 'RC no. :',
+      'value': '78686765443346',
+    },
+    {
+      'name': 'Chasis no. :',
+      'value': '980876658GFU',
+    },
+    {
+      'name': 'LAN no. :',
+      'value': '78686765443346',
+    },
+  ];
+
+  List insuranceInformation = [
+    {
+      'name': 'Insurance :',
+      'value': 'Yes',
+    },
+    {
+      'name': 'Company :',
+      'value': 'Acko Car insurance',
+    },
+    {
+      'name': 'Valid till :',
+      'value': '12 June, 2024',
+    },
+  ];
 }
