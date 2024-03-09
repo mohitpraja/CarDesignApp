@@ -21,9 +21,13 @@ Welcome to the Car Detail Android App repository! This repository contains the s
 
 ## Screenshots :
 
-## Home Page
-![HomeView](/assets/screenshots/home.jpg)
-
+<!-- ![HomeView](/assets/screenshots/home.jpg) -->
+<div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <img src="assets/screenshots/home.jpg" alt="Image Alt Text" style="width: 25%; height: 25%; margin-bottom: 20px;">
+    <img src="assets/screenshots/home_dialog.jpg" alt="Image Alt Text" style="width: 25%; height: 25%; margin-bottom: 20px;">
+    <img src="assets/screenshots/car_detail.jpg" alt="Image Alt Text" style="width: 25%; height: 25%; margin-bottom: 20px;">
+    <img src="assets/screenshots/car_detail_2.jpg" alt="Image Alt Text" style="width: 25%; height: 25%; margin-bottom: 20px;">
+</div>
 
 
 ## Installation
