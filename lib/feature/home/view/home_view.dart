@@ -2,11 +2,11 @@ import 'dart:developer';
 
 import 'package:cardesignapp/core/colors.dart';
 import 'package:cardesignapp/feature/home/controller/home_controller.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:get/get.dart';
-import 'package:story_view/controller/story_controller.dart';
-import 'package:story_view/widgets/story_view.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
@@ -160,7 +160,7 @@ class HomeView extends GetView<HomeController> {
               child: Column(
                 children: [
                   LinearProgressIndicator(
-                    value: 0.25,
+                    value: 0.2,
                     color: primaryColor,
                   ),
                   const SizedBox(
@@ -238,7 +238,11 @@ class HomeView extends GetView<HomeController> {
                               ],
                             ),
                             onTap: () {
-                              showModalSheet();
+                              showModalSheet(
+                                  id: controller.carList[index]['id'],
+                                  title: controller.carList[index]['name'],
+                                  subtitle: controller.carList[index]
+                                      ['subtitle']);
                             },
                           ),
                         );
@@ -254,163 +258,340 @@ class HomeView extends GetView<HomeController> {
     );
   }
 
-  showModalSheet() {
+  showModalSheet(
+      {required String title, required String subtitle, required String id}) {
     showModalBottomSheet(
       context: Get.context!,
       isScrollControlled: true,
       builder: (BuildContext context) {
-        return const DraggableBottomSheet();
+        return DraggableBottomSheet(
+          id: id,
+          subtitle: subtitle,
+          title: title,
+        );
       },
     );
   }
 }
 
 class DraggableBottomSheet extends StatefulWidget {
-  const DraggableBottomSheet({super.key});
+  const DraggableBottomSheet(
+      {super.key,
+      required this.title,
+      required this.subtitle,
+      required this.id});
+
+  final String title;
+  final String subtitle;
+  final String id;
 
   @override
   _DraggableBottomSheetState createState() => _DraggableBottomSheetState();
 }
 
 class _DraggableBottomSheetState extends State<DraggableBottomSheet> {
-  double _dragContainerHeight = 0.5; // Initial height as half of screen height
+  double _dragContainerHeight = 0.55;
   HomeController controller = Get.put(HomeController());
+  late ScrollController scrollController;
+
+  @override
+  void initState() {
+    scrollController = ScrollController();
+    scrollController.addListener(_scrollListener);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    scrollController.removeListener(_scrollListener);
+    super.dispose();
+  }
+
+  void _scrollListener() {
+    log("scroll listner cld");
+    if (scrollController.position.userScrollDirection ==
+        ScrollDirection.reverse) {
+      setState(() {
+        _dragContainerHeight = 0.95;
+      });
+    } else if (scrollController.position.userScrollDirection ==
+        ScrollDirection.forward) {
+      setState(() {
+        _dragContainerHeight = 0.55;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onVerticalDragUpdate: (details) {
-        setState(() {
-          // Update container height while dragging
-          log("details : $details");
-          log("details : ${details.primaryDelta}");
-          double? primaryDelta = details.primaryDelta;
-          if (primaryDelta != null) {
-            if (primaryDelta.toString().contains('-')) {
-              _dragContainerHeight = 0.95;
-            } else {
-              if (_dragContainerHeight == 0.5) {
-                Get.back();
-              } else {
-                _dragContainerHeight = 0.5;
-              }
-            }
-          }
-        });
-      },
-      child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeInOut,
-          width: Get.width,
-          decoration: const BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
-          height: MediaQuery.of(context).size.height * _dragContainerHeight,
-          // height: 0.5,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                children: [
-                  const SizedBox(
-                    height: 10,
-                  ),
-                  SizedBox(
-                    height: 30,
-                    child: Container(
-                      margin: const EdgeInsets.only(bottom: 25),
-                      height: 3,
-                      width: 50,
-                      decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(15),
-                          color: const Color(0xffd9dbdb)),
-                    ),
-                  ),
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text('Maruti Scropio N',
-                                style: TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500)),
-                            Text('MH 32 DF 7865 2016',
-                                style: TextStyle(fontSize: 13, color: grey)),
-                            StoryView(
-                              controller: StoryController(),
-                              repeat: true,
-                              storyItems: controller.storyItem,
-                            )
-                          ],
-                        ),
-                        const Icon(
-                          CupertinoIcons.heart,
-                          color: Colors.red,
-                        )
-                      ],
-                    ),
-                  )
-                ],
-              ),
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                child: Row(
+    return AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        width: Get.width,
+        decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+        height: MediaQuery.of(context).size.height * _dragContainerHeight,
+        // height: 0.55,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            SizedBox(
+              height: Get.height * 0.75 * _dragContainerHeight,
+              child: SingleChildScrollView(
+                controller: scrollController,
+                child: Column(
                   children: [
-                    Expanded(
-                        child: TextFormField(
-                      decoration: InputDecoration(
-                          hintText: '₹ 1,35,000',
-                          enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide(color: grey)),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 15, vertical: 0),
-                          suffixIcon: Container(
-                              decoration: BoxDecoration(
-                                  color: grey.withOpacity(0.7),
-                                  borderRadius: const BorderRadius.only(
-                                      topRight: Radius.circular(8),
-                                      bottomRight: Radius.circular(8))),
-                              child: Icon(
-                                Icons.add,
-                                color: white,
-                              ))),
-                    )),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        if (_dragContainerHeight == 0.955) {
+                          _dragContainerHeight = 0.55;
+                        } else {
+                          _dragContainerHeight = 0.955;
+                        }
+                      },
+                      onVerticalDragUpdate: (details) {
+                        setState(() {
+                          // Update container height while dragging
+                          log("details : $details");
+                          log("details : ${details.primaryDelta}");
+                          double? primaryDelta = details.primaryDelta;
+                          if (primaryDelta != null) {
+                            if (primaryDelta.toString().contains('-')) {
+                              _dragContainerHeight = 0.955;
+                            } else {
+                              if (_dragContainerHeight == 0.55) {
+                                Get.back();
+                              } else {
+                                _dragContainerHeight = 0.55;
+                              }
+                            }
+                          }
+                        });
+                      },
+                      child: SizedBox(
+                        height: 30,
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 25),
+                          height: 3,
+                          width: 50,
+                          decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(15),
+                              color: const Color(0xffd9dbdb)),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(widget.title,
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500)),
+                              Text(widget.subtitle,
+                                  style: TextStyle(fontSize: 13, color: grey)),
+                            ],
+                          ),
+                          const Icon(
+                            CupertinoIcons.heart,
+                            color: Colors.red,
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
                     SizedBox(
-                      width: Get.width * 0.1,
+                      height: 180,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CarouselSlider(
+                              items: controller.carScrollList.map((e) {
+                                return ClipRRect(
+                                  borderRadius: BorderRadius.circular(15),
+                                  child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 5),
+                                      child: Image.asset(
+                                        e,
+                                        fit: BoxFit.fill,
+                                      )),
+                                );
+                              }).toList(),
+                              options: CarouselOptions(
+                                onPageChanged: (index, reason) =>
+                                    controller.currCourselIndex.value = index,
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 10),
+                                viewportFraction: 2,
+                                aspectRatio: 16 / 9,
+                                height: 180,
+                              )),
+                          Positioned(
+                            top: 15,
+                            child: Row(
+                              children: List.generate(
+                                  controller.carScrollList.length,
+                                  (index) => Obx(() => Container(
+                                        width: 40,
+                                        margin: const EdgeInsets.only(right: 6),
+                                        height: 3.5,
+                                        decoration: BoxDecoration(
+                                            color: controller.currCourselIndex
+                                                        .value ==
+                                                    index
+                                                ? Colors.grey[200]
+                                                : Colors.grey[400],
+                                            borderRadius:
+                                                BorderRadius.circular(8)),
+                                      ))),
+                            ),
+                          )
+                        ],
+                      ),
                     ),
-                    MaterialButton(
-                      onPressed: () {},
-                      color: Colors.deepOrangeAccent,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      child: Row(children: [
-                        Icon(
-                          Icons.handyman,
-                          color: white,
-                        ),
-                        const SizedBox(
-                          width: 8,
-                        ),
-                        Text(
-                          'Bid (12)',
-                          style: TextStyle(
-                              color: white, fontSize: 16, letterSpacing: 1.3),
-                        )
-                      ]),
+                    const SizedBox(
+                      height: 15,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      child: Row(
+                        children: [
+                          Text(
+                            widget.id,
+                            style: const TextStyle(fontSize: 16),
+                          )
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      height: 10,
+                    ),
+                    Container(
+                        width: Get.width,
+                        color: Colors.blueGrey.withOpacity(0.15),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 5, horizontal: 15),
+                        child: const Text('Key Information : ')),
+                    SizedBox(
+                      height: 300,
+                      child: GridView.count(
+                        crossAxisCount: 3,
+                        mainAxisSpacing: 0,
+                        crossAxisSpacing: 0,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: List.generate(controller.keyInformation.length,
+                            (index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(controller.keyInformation[index]['icon'],color: Colors.black54,),
+                              Text(controller.keyInformation[index]['title'],style: TextStyle(color: grey,fontSize: 11.5),),
+                              Text(controller.keyInformation[index]['value'],style: const TextStyle(fontSize: 13),)
+                            ],
+                          );
+                        }),
+                      ),
+                    )
                   ],
                 ),
               ),
-            ],
-          )),
-    );
+            ),
+            Column(
+              children: [
+                Container(
+                  color: Colors.blueGrey.withOpacity(0.15),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 15),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      RichText(
+                          text: TextSpan(
+                              style: TextStyle(color: grey),
+                              children: const [
+                            TextSpan(text: "Start's At :  "),
+                            TextSpan(text: ' ₹ 1,35,000')
+                          ])),
+                      RichText(
+                          text: TextSpan(
+                              style: TextStyle(color: grey),
+                              children: const [
+                            TextSpan(text: "Time Left :  "),
+                            TextSpan(
+                                text: ' 15 mins',
+                                style: TextStyle(color: Colors.red))
+                          ])),
+                    ],
+                  ),
+                ),
+                const SizedBox(
+                  height: 10,
+                ),
+                Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+                  child: Row(
+                    children: [
+                      Expanded(
+                          child: TextFormField(
+                        decoration: InputDecoration(
+                            hintText: '₹ 1,35,000',
+                            enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: grey)),
+                            contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 0),
+                            suffixIcon: Container(
+                                decoration: BoxDecoration(
+                                    color: grey.withOpacity(0.7),
+                                    borderRadius: const BorderRadius.only(
+                                        topRight: Radius.circular(8),
+                                        bottomRight: Radius.circular(8))),
+                                child: Icon(
+                                  Icons.add,
+                                  color: white,
+                                ))),
+                      )),
+                      SizedBox(
+                        width: Get.width * 0.1,
+                      ),
+                      MaterialButton(
+                        onPressed: () {},
+                        color: Colors.deepOrangeAccent,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        child: Row(children: [
+                          Icon(
+                            Icons.handyman,
+                            color: white,
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Text(
+                            'Bid (12)',
+                            style: TextStyle(
+                                color: white, fontSize: 16, letterSpacing: 1.3),
+                          )
+                        ]),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ));
   }
 }

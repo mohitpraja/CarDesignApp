@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:story_view/widgets/story_view.dart';
 
 class HomeController extends GetxController {
+  RxInt currCourselIndex = 0.obs;
   RxList categoryList = [
     {
       'name': 'All(150)',
@@ -165,8 +165,37 @@ class HomeController extends GetxController {
     },
   ].obs;
 
-  List<StoryItem> storyItem = [
-    StoryItem(Image.asset('assets/images/careta.jpg'), duration: const Duration(seconds: 1)),
-    StoryItem(Image.asset('assets/images/verna.jpg'), duration: const Duration(seconds: 1)),
+  List carScrollList = [
+    'assets/images/classic_scorpio.jpg',
+    'assets/images/fronx.jpg',
+    'assets/images/creta.jpg',
+    'assets/images/classic_scorpio.jpg',
+    'assets/images/verna.jpg',
+    'assets/images/suv.jpg',
+  ];
+
+  List keyInformation = [
+    {'icon': Icons.car_repair, 'title': 'MFG Year', 'value': '2021'},
+    {
+      'icon': Icons.calendar_month,
+      'title': 'Repo Date',
+      'value': '26 Jul 2023'
+    },
+    {
+      'icon': Icons.oil_barrel_outlined,
+      'title': 'Fuel Type',
+      'value': 'Petrol'
+    },
+    {'icon': Icons.speed, 'title': "KM's Driven", 'value': '20,000'},
+    {
+      'icon': Icons.location_pin,
+      'title': "Yard Location",
+      'value': 'Thane | 100  P/D'
+    },
+    {
+      'icon': Icons.electric_bolt,
+      'title': "Transmission",
+      'value': 'Automatic'
+    },
   ];
 }
